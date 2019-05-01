@@ -1,6 +1,6 @@
 {
   "name": "pan-responder-hook",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A react-native like gesture helper for the React and using hooks",
   "main": "cjs/index.js",
   "module": "esm/index.js",
