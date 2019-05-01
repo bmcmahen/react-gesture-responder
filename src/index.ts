@@ -35,7 +35,7 @@ export type CallbackQueryType = (
 ) => boolean;
 export type CallbackType = (state: StateType, e: ResponderEvent) => void;
 
-export interface Options {
+export interface Callbacks {
   onStartShouldSetCapture?: CallbackQueryType;
   onStartShouldSet?: CallbackQueryType;
   onMoveShouldSetCapture?: CallbackQueryType;
@@ -43,7 +43,7 @@ export interface Options {
   onGrant?: CallbackType;
   onMove?: CallbackType;
   onRelease?: CallbackType;
-  onTerminate?: CallbackType;
+  onTerminate?: (state: StateType, e?: ResponderEvent) => void;
 }
 
 const initialState = {
@@ -62,15 +62,29 @@ const initialState = {
 
 export type StateType = typeof initialState;
 
+interface Config {
+  uid?: string;
+  enableMouse?: boolean;
+}
+
+const defaultConfig: Config = {
+  enableMouse: true
+};
+
 export interface GrantedTouch {
   id: string | number;
-  onTerminate: (e: ResponderEvent) => void;
+  onTerminate: (e?: ResponderEvent) => void;
 }
 
 let grantedTouch: GrantedTouch | null = null;
 
-export function usePanResponder(options: Options = {}, uid?: string) {
+export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
   const state = React.useRef(initialState);
+
+  const { uid, enableMouse } = {
+    ...defaultConfig,
+    ...config
+  };
   const id = React.useRef(uid || Math.random());
   const [pressed, setPressed] = React.useState(false);
 
@@ -328,7 +342,7 @@ export function usePanResponder(options: Options = {}, uid?: string) {
    * The responder has been taken by another view
    */
 
-  function onTerminate(e: ResponderEvent) {
+  function onTerminate(e?: ResponderEvent) {
     const s = state.current;
     state.current = {
       ...state.current,
@@ -346,7 +360,7 @@ export function usePanResponder(options: Options = {}, uid?: string) {
    */
 
   React.useEffect(() => {
-    if (pressed) {
+    if (pressed && enableMouse) {
       window.addEventListener("mousemove", handleMove, false);
       window.addEventListener("mousemove", handleMoveCapture, true);
       window.addEventListener("mouseup", handleEnd);
@@ -356,7 +370,31 @@ export function usePanResponder(options: Options = {}, uid?: string) {
       window.removeEventListener("mousemove", handleMoveCapture, true);
       window.removeEventListener("mouseup", handleEnd);
     };
-  }, [pressed]);
+  }, [pressed, enableMouse]);
+
+  /**
+   * Imperatively terminate the current responder
+   */
+
+  function terminateCurrentResponder() {
+    if (grantedTouch) {
+      grantedTouch.onTerminate();
+      grantedTouch = null;
+    }
+  }
+
+  /**
+   * A getter for returning the current
+   * responder, if it exists
+   */
+
+  function getCurrentResponder() {
+    return grantedTouch;
+  }
+
+  /**
+   * Required touch / mouse events
+   */
 
   const touchEvents = {
     onTouchStart: handleStart,
@@ -366,13 +404,19 @@ export function usePanResponder(options: Options = {}, uid?: string) {
     onTouchMoveCapture: handleMoveCapture
   };
 
-  const mouseEvents = {
-    onMouseDown: handleStart,
-    onMouseDownCapture: handleStartCapture
-  };
+  const mouseEvents = enableMouse
+    ? {
+        onMouseDown: handleStart,
+        onMouseDownCapture: handleStartCapture
+      }
+    : {};
 
   return {
-    ...touchEvents,
-    ...mouseEvents
+    bind: {
+      ...touchEvents,
+      ...mouseEvents
+    },
+    terminateCurrentResponder,
+    getCurrentResponder
   };
 }

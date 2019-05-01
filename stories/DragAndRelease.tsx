@@ -14,7 +14,7 @@ export const DragAndRelease: React.FunctionComponent<
     transform: `translate3d(0px, 0px, 0)`
   }));
 
-  const bind = usePanResponder({
+  const { bind } = usePanResponder({
     onStartShouldSet: () => true,
     onGrant: () => setActive(true),
     onRelease: end,

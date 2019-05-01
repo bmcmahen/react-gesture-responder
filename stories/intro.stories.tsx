@@ -10,7 +10,7 @@ function Example({ options }: ExampleOptions) {
   const [active, setActive] = React.useState(false);
   const [count, setCount] = React.useState(0);
 
-  const bind = usePanResponder(
+  const { bind } = usePanResponder(
     {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),

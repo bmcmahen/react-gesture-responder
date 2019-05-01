@@ -9,7 +9,7 @@ type ExampleOptions = any;
 
 function Example({ options, id = "example" }: ExampleOptions) {
   const [active, setActive] = React.useState(false);
-  const bind = usePanResponder(
+  const { bind } = usePanResponder(
     {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),

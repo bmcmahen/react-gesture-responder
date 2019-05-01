@@ -6,7 +6,7 @@ import { usePanResponder } from "../src";
 
 function Child() {
   const [active, setActive] = React.useState(false);
-  const bind = usePanResponder(
+  const { bind } = usePanResponder(
     {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),
@@ -40,7 +40,7 @@ function Child() {
 
 function Parent() {
   const [active, setActive] = React.useState(false);
-  const bind = usePanResponder(
+  const { bind } = usePanResponder(
     {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),
