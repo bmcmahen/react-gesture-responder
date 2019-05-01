@@ -24,25 +24,29 @@ import * as React from "react";
  * onMoveShouldSetCapture, and onMoveShouldSet to dictate
  * which gets priority.
  *
- * Typically you'd want to avid capture since it's generally
+ * Typically you'd want to avoid capture since it's generally
  * preferable to have child elements gain touch access.
  */
 
-interface Options {
-  onStartShouldSetCapture?: (state: StateType) => boolean;
-  onStartShouldSet?: (state: StateType) => boolean;
-  onMoveShouldSetCapture?: (state: StateType) => boolean;
-  onMoveShouldSet?: (state: StateType) => boolean;
-  onGrant?: (state: StateType) => void;
-  onMove?: (state: StateType) => void;
-  onTerminationRequest?: (state: StateType) => boolean;
-  onRelease?: (state: StateType) => void;
-  onTerminate?: (state: StateType) => void;
+export type ResponderEvent = React.TouchEvent | React.MouseEvent;
+export type CallbackQueryType = (
+  state: StateType,
+  e: ResponderEvent
+) => boolean;
+export type CallbackType = (state: StateType, e: ResponderEvent) => void;
+
+export interface Options {
+  onStartShouldSetCapture?: CallbackQueryType;
+  onStartShouldSet?: CallbackQueryType;
+  onMoveShouldSetCapture?: CallbackQueryType;
+  onMoveShouldSet?: CallbackQueryType;
+  onGrant?: CallbackType;
+  onMove?: CallbackType;
+  onRelease?: CallbackType;
+  onTerminate?: CallbackType;
 }
 
 const initialState = {
-  event: undefined,
-  target: undefined,
   time: Date.now(),
   xy: [0, 0],
   delta: [0, 0],
@@ -57,58 +61,39 @@ const initialState = {
   first: true
 };
 
-type StateType = typeof initialState;
+export type StateType = typeof initialState;
 
-interface GrantedTouch {
+export interface GrantedTouch {
   id: string | number;
-  onTerminationRequest: () => boolean;
-  onTerminate: () => void;
+  onTerminate: (e: ResponderEvent) => void;
 }
 
 let grantedTouch: GrantedTouch | null = null;
 
 export function usePanResponder(options: Options = {}, uid?: string) {
-  const ref = React.useRef<any>(null);
   const state = React.useRef(initialState);
   const id = React.useRef(uid || Math.random());
+  const [pressed, setPressed] = React.useState(false);
 
-  // potentially do?:
-  // const optionsRef = React.useRef(options)
-  // useEffect(() => { optionsRef.options = options }, [options])
+  /**
+   * Attempt to claim the active touch
+   */
 
-  React.useEffect(() => {
-    if (!ref.current) {
-      throw new Error("Unable to find current ref");
-    }
-
-    const el = ref.current!;
-
-    // todo: mouse events
-    el.addEventListener("touchstart", handleStart, false);
-    el.addEventListener("touchend", handleEnd);
-    el.addEventListener("touchmove", handleMove, false);
-    el.addEventListener("touchstart", handleStartCapture, true);
-    el.addEventListener("touchmove", handleMoveCapture, true);
-
-    return () => {
-      el.removeEventListener("touchstart", handleStart, false);
-      el.removeEventListener("touchend", handleEnd);
-      el.removeEventListener("touchmove", handleMove, false);
-      el.removeEventListener("touchstart", handleStartCapture, true);
-      el.removeEventListener("touchmove", handleMoveCapture, true);
-    };
-  }, []);
-
-  function claimTouch(e: Event) {
+  function claimTouch(e: ResponderEvent) {
     if (grantedTouch) {
-      grantedTouch.onTerminate();
+      grantedTouch.onTerminate(e);
       grantedTouch = null;
     }
 
     attemptGrant(e);
   }
 
-  function attemptGrant(e: Event) {
+  /**
+   * Attempt to claim the active touch
+   * @param e
+   */
+
+  function attemptGrant(e: ResponderEvent) {
     // if a touch is already active we won't register
     if (grantedTouch) {
       return;
@@ -116,8 +101,7 @@ export function usePanResponder(options: Options = {}, uid?: string) {
 
     grantedTouch = {
       id: id.current,
-      onTerminate,
-      onTerminationRequest
+      onTerminate
     };
 
     state.current = {
@@ -128,19 +112,23 @@ export function usePanResponder(options: Options = {}, uid?: string) {
     onGrant(e);
   }
 
-  function handleStartCapture(e: Event) {
-    const granted = onStartShouldSetCapture();
+  function handleStartCapture(e: ResponderEvent) {
+    setPressed(true);
+
+    const granted = onStartShouldSetCapture(e);
     if (granted) {
       attemptGrant(e);
     }
   }
 
-  function handleStart(e: Event) {
+  function handleStart(e: ResponderEvent) {
+    setPressed(true);
+
     if (e.cancelable) {
       e.preventDefault();
     }
 
-    const granted = onStartShouldSet();
+    const granted = onStartShouldSet(e);
 
     if (granted) {
       attemptGrant(e);
@@ -151,7 +139,14 @@ export function usePanResponder(options: Options = {}, uid?: string) {
     return grantedTouch && grantedTouch.id === id.current;
   }
 
-  function handleEnd(e: Event) {
+  /**
+   * Handle touchend / mouseup events
+   * @param e
+   */
+
+  function handleEnd(e: ResponderEvent) {
+    setPressed(false);
+
     if (!isGrantedTouch()) {
       return;
     }
@@ -171,9 +166,14 @@ export function usePanResponder(options: Options = {}, uid?: string) {
     onRelease(e);
   }
 
-  function handleMoveCapture(e: Event) {
+  /**
+   * Handle touchmove / mousemove capture events
+   * @param e
+   */
+
+  function handleMoveCapture(e: ResponderEvent) {
     if (!isGrantedTouch()) {
-      const grant = onMoveShouldSetCapture();
+      const grant = onMoveShouldSetCapture(e);
       if (grant) claimTouch(e);
       else return;
     }
@@ -181,10 +181,15 @@ export function usePanResponder(options: Options = {}, uid?: string) {
     onMove(e);
   }
 
-  function handleMove(e: Event) {
+  /**
+   * Handle touchmove / mousemove events
+   * @param e
+   */
+
+  function handleMove(e: ResponderEvent) {
     if (!isGrantedTouch()) {
-      const grant = onMoveShouldSet();
-      // console.log("should focus?", id.current, grant);
+      const grant = onMoveShouldSet(e);
+
       if (grant) {
         claimTouch(e);
       } else {
@@ -195,37 +200,58 @@ export function usePanResponder(options: Options = {}, uid?: string) {
     onMove(e);
   }
 
-  function onStartShouldSetCapture() {
-    return options.onStartShouldSetCapture
-      ? options.onStartShouldSetCapture(state.current)
-      : false;
-  }
+  /**
+   * When our gesture starts, should we become the responder?
+   */
 
-  function onStartShouldSet() {
+  function onStartShouldSet(e: ResponderEvent) {
     return options.onStartShouldSet
-      ? options.onStartShouldSet(state.current)
+      ? options.onStartShouldSet(state.current, e)
       : false;
   }
 
-  function onMoveShouldSet() {
+  /**
+   * Same as onStartShouldSet, except using capture.
+   */
+
+  function onStartShouldSetCapture(e: ResponderEvent) {
+    return options.onStartShouldSetCapture
+      ? options.onStartShouldSetCapture(state.current, e)
+      : false;
+  }
+
+  /**
+   * When our gesture moves, should we become the responder?
+   */
+
+  function onMoveShouldSet(e: ResponderEvent) {
     return options.onMoveShouldSet
-      ? options.onMoveShouldSet(state.current)
+      ? options.onMoveShouldSet(state.current, e)
       : false;
   }
 
-  function onMoveShouldSetCapture() {
+  /**
+   * Same as onMoveShouldSet, but using capture instead
+   * of bubbling.
+   */
+
+  function onMoveShouldSetCapture(e: ResponderEvent) {
     return options.onMoveShouldSetCapture
-      ? options.onMoveShouldSetCapture(state.current)
+      ? options.onMoveShouldSetCapture(state.current, e)
       : false;
   }
+
+  /**
+   * The view is responding to gestures. Typically corresponds
+   * with mousedown or touchstart.
+   * @param e
+   */
 
   function onGrant(e: any) {
-    const { target, pageX, pageY } = e.touches ? e.touches[0] : e;
+    const { pageX, pageY } = e.touches ? e.touches[0] : e;
     const s = state.current;
     state.current = {
       ...state.current,
-      event: e,
-      target,
       lastLocal: s.lastLocal || initialState.lastLocal,
       xy: [pageX, pageY],
       initial: [pageX, pageY],
@@ -234,12 +260,20 @@ export function usePanResponder(options: Options = {}, uid?: string) {
       time: Date.now()
     };
     if (options.onGrant) {
-      options.onGrant(state.current);
+      options.onGrant(state.current, e);
     }
   }
 
+  /**
+   * The user is moving their touch / mouse. Most of the math here
+   * is from react-with-gesture.
+   * @param e
+   */
+
   function onMove(e: any) {
-    const { pageX, pageY } = e.touches ? e.touches[0] : e;
+    const { pageX, pageY } = e.nativeEvent.touches
+      ? e.nativeEvent.touches[0]
+      : e;
     const s = state.current;
     const time = Date.now();
     const x_dist = pageX - s.xy[0];
@@ -253,7 +287,6 @@ export function usePanResponder(options: Options = {}, uid?: string) {
 
     state.current = {
       ...state.current,
-      event: e,
       time,
       xy: [pageX, pageY],
       delta: [delta_x, delta_y],
@@ -269,43 +302,62 @@ export function usePanResponder(options: Options = {}, uid?: string) {
     };
 
     if (options.onMove) {
-      options.onMove(state.current);
+      options.onMove(state.current, e);
     }
   }
 
-  function onTerminationRequest() {
-    return options.onTerminationRequest
-      ? options.onTerminationRequest(state.current)
-      : true;
-  }
+  /**
+   * The responder has been released. Typically mouse-up or
+   * touchend events.
+   * @param e
+   */
 
-  function onRelease(e: any) {
+  function onRelease(e: ResponderEvent) {
     const s = state.current;
     state.current = {
       ...state.current,
-      event: e,
       lastLocal: s.local
     };
 
     if (options.onRelease) {
-      options.onRelease(state.current);
+      options.onRelease(state.current, e);
     }
   }
 
-  function onTerminate() {
+  /**
+   * The responder has been taken by another view
+   */
+
+  function onTerminate(e: ResponderEvent) {
     const s = state.current;
     state.current = {
       ...state.current,
-      event: undefined,
       lastLocal: s.local
     };
 
     if (options.onTerminate) {
-      options.onTerminate(state.current);
+      options.onTerminate(state.current, e);
     }
   }
 
+  const touchEvents = {
+    onTouchStart: handleStart,
+    onTouchEnd: handleEnd,
+    onTouchMove: handleMove,
+    onTouchStartCapture: handleStartCapture,
+    onTouchMoveCapture: handleMoveCapture
+  };
+
+  const mouseEvents = {
+    onMouseDown: handleStart,
+    onMouseUp: handleEnd,
+    onMouseDownCapture: handleStartCapture,
+    onMouseMoveCapture: pressed ? handleMoveCapture : undefined,
+    onMouseMove: pressed ? handleMove : undefined
+  };
+
   return {
-    ref
+    ...touchEvents,
+    ...mouseEvents
   };
 }
