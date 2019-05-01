@@ -74,6 +74,12 @@ export function usePanResponder(options: Options = {}, uid?: string) {
   const id = React.useRef(uid || Math.random());
   const [pressed, setPressed] = React.useState(false);
 
+  // update our callbacks when they change
+  const callbackRefs = React.useRef(options);
+  React.useEffect(() => {
+    callbackRefs.current = options;
+  }, [options]);
+
   /**
    * Attempt to claim the active touch
    */
@@ -202,8 +208,8 @@ export function usePanResponder(options: Options = {}, uid?: string) {
    */
 
   function onStartShouldSet(e: ResponderEvent) {
-    return options.onStartShouldSet
-      ? options.onStartShouldSet(state.current, e)
+    return callbackRefs.current.onStartShouldSet
+      ? callbackRefs.current.onStartShouldSet(state.current, e)
       : false;
   }
 
@@ -212,8 +218,8 @@ export function usePanResponder(options: Options = {}, uid?: string) {
    */
 
   function onStartShouldSetCapture(e: ResponderEvent) {
-    return options.onStartShouldSetCapture
-      ? options.onStartShouldSetCapture(state.current, e)
+    return callbackRefs.current.onStartShouldSetCapture
+      ? callbackRefs.current.onStartShouldSetCapture(state.current, e)
       : false;
   }
 
@@ -222,8 +228,8 @@ export function usePanResponder(options: Options = {}, uid?: string) {
    */
 
   function onMoveShouldSet(e: ResponderEvent) {
-    return options.onMoveShouldSet
-      ? options.onMoveShouldSet(state.current, e)
+    return callbackRefs.current.onMoveShouldSet
+      ? callbackRefs.current.onMoveShouldSet(state.current, e)
       : false;
   }
 
@@ -233,8 +239,8 @@ export function usePanResponder(options: Options = {}, uid?: string) {
    */
 
   function onMoveShouldSetCapture(e: ResponderEvent) {
-    return options.onMoveShouldSetCapture
-      ? options.onMoveShouldSetCapture(state.current, e)
+    return callbackRefs.current.onMoveShouldSetCapture
+      ? callbackRefs.current.onMoveShouldSetCapture(state.current, e)
       : false;
   }
 
@@ -255,8 +261,8 @@ export function usePanResponder(options: Options = {}, uid?: string) {
       previous: [pageX, pageY],
       time: Date.now()
     };
-    if (options.onGrant) {
-      options.onGrant(state.current, e);
+    if (callbackRefs.current.onGrant) {
+      callbackRefs.current.onGrant(state.current, e);
     }
   }
 
@@ -295,8 +301,8 @@ export function usePanResponder(options: Options = {}, uid?: string) {
       first: false
     };
 
-    if (options.onMove) {
-      options.onMove(state.current, e);
+    if (callbackRefs.current.onMove) {
+      callbackRefs.current.onMove(state.current, e);
     }
   }
 
@@ -313,8 +319,8 @@ export function usePanResponder(options: Options = {}, uid?: string) {
       lastLocal: s.local
     };
 
-    if (options.onRelease) {
-      options.onRelease(state.current, e);
+    if (callbackRefs.current.onRelease) {
+      callbackRefs.current.onRelease(state.current, e);
     }
   }
 
@@ -329,8 +335,8 @@ export function usePanResponder(options: Options = {}, uid?: string) {
       lastLocal: s.local
     };
 
-    if (options.onTerminate) {
-      options.onTerminate(state.current, e);
+    if (callbackRefs.current.onTerminate) {
+      callbackRefs.current.onTerminate(state.current, e);
     }
   }
 

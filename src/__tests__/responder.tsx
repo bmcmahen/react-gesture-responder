@@ -21,16 +21,7 @@ function Example({ options, id = "example" }: ExampleOptions) {
   );
 
   return (
-    <div
-      data-testid={id}
-      data-active={active}
-      {...bind}
-      css={{
-        width: "100px",
-        height: "100px",
-        background: active ? "#ddd" : "#eee"
-      }}
-    >
+    <div data-testid={id} data-active={active} {...bind}>
       Child
     </div>
   );
