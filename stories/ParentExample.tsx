@@ -10,14 +10,22 @@ function Child() {
     {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),
-      onRelease: () => setActive(false),
-      onTerminate: () => setActive(false)
+      onRelease: () => {
+        console.log("release");
+        setActive(false);
+      },
+      onTerminate: () => {
+        console.log("terminate");
+        setActive(false);
+      }
     },
     "child"
   );
 
   return (
     <div
+      data-testid="child"
+      data-active={active}
       {...bind}
       css={{
         width: "100px",
@@ -43,13 +51,18 @@ function Parent() {
       onMove: () => {
         console.log(active);
       },
-      onTerminate: () => setActive(false)
+      onTerminate: () => {
+        console.log("terminate");
+        setActive(false);
+      }
     },
     "parent"
   );
 
   return (
     <div
+      data-testid="parent"
+      data-active={active}
       css={{
         width: "200px",
         height: "200px",

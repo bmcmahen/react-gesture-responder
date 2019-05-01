@@ -187,9 +187,7 @@ export function usePanResponder(options: Options = {}, uid?: string) {
 
   function handleMove(e: ResponderEvent) {
     if (!isGrantedTouch()) {
-      const grant = onMoveShouldSet(e);
-
-      if (grant) {
+      if (onMoveShouldSet(e)) {
         claimTouch(e);
       } else {
         return;
@@ -247,7 +245,7 @@ export function usePanResponder(options: Options = {}, uid?: string) {
    */
 
   function onGrant(e: any) {
-    const { pageX, pageY } = e.touches ? e.touches[0] : e;
+    const { pageX, pageY } = e.touches && e.touches[0] ? e.touches[0] : e;
     const s = state.current;
     state.current = {
       ...state.current,
@@ -269,8 +267,7 @@ export function usePanResponder(options: Options = {}, uid?: string) {
    */
 
   function onMove(e: any) {
-    const nativeEvent = e.nativeEvent || e;
-    const { pageX, pageY } = nativeEvent.touches ? nativeEvent.touches[0] : e;
+    const { pageX, pageY } = e.touches && e.touches[0] ? e.touches[0] : e;
     const s = state.current;
     const time = Date.now();
     const x_dist = pageX - s.xy[0];

@@ -18,6 +18,13 @@
     "build": "yarn run build-esm && yarn run build-cjs && yarn run build-umd",
     "prepublishOnly": "yarn run build"
   },
+  "files": [
+    "esm",
+    "commonjs",
+    "src",
+    "umd",
+    "Readme.md"
+  ],
   "peerDependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
@@ -38,10 +45,12 @@
     "babel-loader": "^8.0.5",
     "babel-plugin-require-context-hook": "^1.0.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "jest": "^24.5.0",
+    "jest": "^24.7.1",
+    "jest-dom": "^3.1.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-spring": "^8.0.19",
+    "react-testing-library": "^7.0.0",
     "rimraf": "^2.6.3",
     "rollup": "^1.7.4",
     "rollup-plugin-babel": "^4.3.2",
