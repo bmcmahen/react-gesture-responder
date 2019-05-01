@@ -19,7 +19,7 @@ function Child() {
         setActive(false);
       }
     },
-    "child"
+    { uid: "child" }
   );
 
   return (
@@ -56,7 +56,7 @@ function Parent() {
         setActive(false);
       }
     },
-    "parent"
+    { uid: "parent" }
   );
 
   return (

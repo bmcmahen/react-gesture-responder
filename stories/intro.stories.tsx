@@ -21,7 +21,7 @@ function Example({ options }: ExampleOptions) {
       onTerminate: () => setActive(false),
       ...options
     },
-    "child"
+    { uid: "child" }
   );
 
   React.useEffect(() => {
