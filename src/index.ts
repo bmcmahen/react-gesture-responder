@@ -28,7 +28,7 @@ import * as React from "react";
  * preferable to have child elements gain touch access.
  */
 
-export type ResponderEvent = React.TouchEvent | React.MouseEvent;
+export type ResponderEvent = React.TouchEvent | React.MouseEvent | Event;
 export type CallbackQueryType = (
   state: StateType,
   e: ResponderEvent
@@ -57,7 +57,6 @@ const initialState = {
   lastLocal: [0, 0],
   velocity: 0,
   distance: 0,
-  down: false,
   first: true
 };
 
@@ -256,7 +255,6 @@ export function usePanResponder(options: Options = {}, uid?: string) {
       xy: [pageX, pageY],
       initial: [pageX, pageY],
       previous: [pageX, pageY],
-      down: true,
       time: Date.now()
     };
     if (options.onGrant) {
@@ -271,9 +269,8 @@ export function usePanResponder(options: Options = {}, uid?: string) {
    */
 
   function onMove(e: any) {
-    const { pageX, pageY } = e.nativeEvent.touches
-      ? e.nativeEvent.touches[0]
-      : e;
+    const nativeEvent = e.nativeEvent || e;
+    const { pageX, pageY } = nativeEvent.touches ? nativeEvent.touches[0] : e;
     const s = state.current;
     const time = Date.now();
     const x_dist = pageX - s.xy[0];
@@ -340,6 +337,24 @@ export function usePanResponder(options: Options = {}, uid?: string) {
     }
   }
 
+  /**
+   * Use window mousemove events instead of binding to the
+   * element itself to better emulate how touchmove works.
+   */
+
+  React.useEffect(() => {
+    if (pressed) {
+      window.addEventListener("mousemove", handleMove, false);
+      window.addEventListener("mousemove", handleMoveCapture, true);
+      window.addEventListener("mouseup", handleEnd);
+    }
+    return () => {
+      window.removeEventListener("mousemove", handleMove, false);
+      window.removeEventListener("mousemove", handleMoveCapture, true);
+      window.removeEventListener("mouseup", handleEnd);
+    };
+  }, [pressed]);
+
   const touchEvents = {
     onTouchStart: handleStart,
     onTouchEnd: handleEnd,
@@ -350,10 +365,7 @@ export function usePanResponder(options: Options = {}, uid?: string) {
 
   const mouseEvents = {
     onMouseDown: handleStart,
-    onMouseUp: handleEnd,
-    onMouseDownCapture: handleStartCapture,
-    onMouseMoveCapture: pressed ? handleMoveCapture : undefined,
-    onMouseMove: pressed ? handleMove : undefined
+    onMouseDownCapture: handleStartCapture
   };
 
   return {
