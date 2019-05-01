@@ -7,7 +7,11 @@ afterEach(cleanup);
 
 type ExampleOptions = any;
 
-function Example({ options, id = "example" }: ExampleOptions) {
+function Example({
+  options,
+  id = "example",
+  enableMouse = true
+}: ExampleOptions) {
   const [active, setActive] = React.useState(false);
   const { bind } = usePanResponder(
     {
@@ -17,7 +21,7 @@ function Example({ options, id = "example" }: ExampleOptions) {
       onTerminate: () => setActive(false),
       ...options
     },
-    id
+    { uid: id, enableMouse }
   );
 
   return (
@@ -152,4 +156,25 @@ test("it overrites existing when move is set", () => {
 
   expect(onGrant).toBeCalled();
   expect(otherTerminate).toBeCalledTimes(0);
+});
+
+test("disabling mouse events works", () => {
+  const onGrant = jest.fn();
+  const onMove = jest.fn();
+  const { getByTestId } = render(
+    <Example
+      enableMouse={false}
+      options={{
+        onStartShouldSet: () => true,
+        onGrant,
+        onMove
+      }}
+    />
+  );
+
+  const child = getByTestId("example");
+  fireEvent.mouseDown(child);
+  expect(onGrant).toBeCalledTimes(0);
+  fireEvent.mouseMove(child);
+  expect(onMove).toBeCalledTimes(0);
 });
