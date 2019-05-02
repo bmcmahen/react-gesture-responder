@@ -103,19 +103,18 @@ const { bind } = usePanResponder(
 `state` contains the following values:
 
 ```js
-type StateType = {
-  time: number,
-  xy: number[],
-  delta: number[],
-  initial: number[],
-  previous: number[],
-  direction: number[],
-  local: number[],
-  lastLocal: number[],
-  velocity: number,
-  distance: number,
-  first: boolean
-};
+export interface StateType {
+  time: number;
+  xy: [number, number];
+  delta: [number, number];
+  initial: [number, number];
+  previous: [number, number];
+  direction: [number, number];
+  local: [number, number];
+  lastLocal: [number, number];
+  velocity: number;
+  distance: number;
+}
 ```
 
 ## Prior art
