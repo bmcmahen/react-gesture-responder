@@ -9,12 +9,12 @@ https://twitter.com/intent/follow?screen_name=benmcmahen
 
 </div>
 
-`pan-responder-hook` offers a gesture responder system for your react application. It's heavily inspired by [react native's](https://facebook.github.io/react-native/docs/gesture-responder-system.html) pan-responder and the implementation found in [react-native-web](https://github.com/necolas/react-native-web/blob/master/packages/react-native-web/src/vendor/react-native/PanResponder/index.js). It's built for use in [Sancho-UI](https://github.com/bmcmahen/sancho).
+`pan-responder-hook` offers a gesture responder system for your react application. It's heavily inspired by [react-native's](https://facebook.github.io/react-native/docs/gesture-responder-system.html) pan-responder and the implementation found in [react-native-web](https://github.com/necolas/react-native-web/blob/master/packages/react-native-web/src/vendor/react-native/PanResponder/index.js). It's built for use in [Sancho-UI](https://github.com/bmcmahen/sancho).
 
 ## Features
 
 - **The ability to delegate between multiple overlapping gestures.** This means that you can embed gesture responding views within eachother and provide negotiation strategies between them.
-- **Simple math for providing gesture based animations.** Values including distance, velocity, delta, and direction are provided during through gesture callbacks.
+- **Simple math for providing gesture based animations.** Values including distance, velocity, delta, and direction are provided through gesture callbacks.
 - **Integrates well with [react-spring](react-spring.io) to create performant animations**.
 
 ## Getting started
@@ -60,13 +60,13 @@ function Draggable() {
 Only one pan responder can be active at any given time. The pan-responder hook provides callbacks which allow you to implement a negotiation strategy between competing views.
 
 - `onStartShouldSet: (state, e) => boolean` - Should the view become the responder upon first touch?
-- `onMoveShouldSet: (state, e) => boolean` = This function is called during any gesture movement on the view. You can return true to claim the responder for that view.
-- `onStartShouldSetCapture: (state, e) => boolean` - The same as above, but it uses event capturing instead of bubbling. Useful if you want the parent view to capture the responder prior to the children.
+- `onMoveShouldSet: (state, e) => boolean` - This is called during any gesture movement on the view. You can return true to claim the responder for that view.
+- `onStartShouldSetCapture: (state, e) => boolean` - The same as above, but using event capturing instead of bubbling. Useful if you want a parent view to capture the responder prior to children.
 - `onMoveShouldSetCapture: (state, e) => boolean`.
 
 By default, if a parent and child both return true from `onStartShouldSet` the child element will claim the responder.
 
-Once a responder is claimed, other callbacks will be called which will be useful for providing feedback to the user.
+Once a responder is claimed, other callbacks can be used to provide visual feedback to the user.
 
 - `onGrant: (state, e) => void` - called when the view claims the responder, typically corresponding with `mousedown` or `touchstart` events.
 - `onMove: (state, e) => void`
