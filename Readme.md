@@ -28,6 +28,8 @@ yarn add pan-responder-hook
 The example below demonstrates how it can be used in conjunction with `react-spring`.
 
 ```jsx
+import { usePanResponder } from 'pan-responder-hook';
+
 function Draggable() {
   const [active, setActive] = React.useState(false);
   const [style, set] = useSpring(() => ({
