@@ -44,6 +44,7 @@ export interface Callbacks {
   onMove?: CallbackType;
   onRelease?: CallbackType;
   onTerminate?: (state: StateType, e?: ResponderEvent) => void;
+  onTerminationRequest?: (state: StateType, e?: ResponderEvent) => boolean;
 }
 
 const initialState: StateType = {
@@ -83,6 +84,7 @@ const defaultConfig: Config = {
 
 export interface GrantedTouch {
   id: string | number;
+  onTerminationRequest: (e?: ResponderEvent) => void;
   onTerminate: (e?: ResponderEvent) => void;
 }
 
@@ -109,7 +111,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   function claimTouch(e: ResponderEvent) {
-    if (grantedTouch) {
+    if (grantedTouch && grantedTouch.onTerminationRequest(e)) {
       grantedTouch.onTerminate(e);
       grantedTouch = null;
     }
@@ -130,7 +132,8 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
 
     grantedTouch = {
       id: id.current,
-      onTerminate
+      onTerminate,
+      onTerminationRequest
     };
 
     onGrant(e);
@@ -356,6 +359,21 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
     if (callbackRefs.current.onRelease) {
       callbackRefs.current.onRelease(state.current, e);
     }
+  }
+
+  /**
+   * Check with the current responder to see if it can
+   * be terminated. This is currently only triggered when returns true
+   * from onMoveShouldSet. I can't really envision much of a
+   * use-case for doing this with a standard onStartShouldSet.
+   *
+   * By default, returns true.
+   */
+
+  function onTerminationRequest(e?: ResponderEvent) {
+    return callbackRefs.current.onTerminationRequest
+      ? callbackRefs.current.onTerminationRequest(state.current, e)
+      : true;
   }
 
   /**

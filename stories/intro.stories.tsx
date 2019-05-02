@@ -6,7 +6,7 @@ import { DragAndRelease } from "./DragAndRelease";
 
 type ExampleOptions = any;
 
-function Example({ options }: ExampleOptions) {
+function Example({ options, uid = "child", children }: ExampleOptions) {
   const [active, setActive] = React.useState(false);
   const [count, setCount] = React.useState(0);
 
@@ -15,38 +15,41 @@ function Example({ options }: ExampleOptions) {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),
       onRelease: () => {
-        console.log("COUNT ON RELEASE", count);
         setActive(false);
       },
       onTerminate: () => setActive(false),
       ...options
     },
-    { uid: "child" }
+    { uid }
   );
 
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      console.log("set count: ", count + 1);
-      setCount(count + 1);
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [count]);
+  console.log(active);
 
   return (
     <div
       data-testid="example"
       data-active={active}
       {...bind}
-      css={{
-        width: "100px",
-        height: "100px",
+      style={{
+        border: "1px solid",
+        padding: "30px",
+        width: "100%",
+        boxSizing: "border-box",
+        position: "relative",
+        height: "100%",
         background: active ? "#ddd" : "#eee"
       }}
     >
-      Child
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0
+        }}
+      >
+        {uid}
+      </div>
+      {children}
     </div>
   );
 }
@@ -70,4 +73,31 @@ storiesOf("Hello", module)
   ))
   .add("update functions", () => {
     return <Example />;
-  });
+  })
+  .add("non-overridable child swipe", () => (
+    <div>
+      <Example
+        uid="parent-sipe"
+        options={{
+          onStartShouldSet: () => true,
+          onMoveShouldSet: () => true
+        }}
+      >
+        <Example
+          uid="child-swipe"
+          options={{
+            onStartShouldSet: () => true,
+            onMoveShouldSet: () => true,
+            onTerminationRequest: () => false
+          }}
+        >
+          <Example
+            uid="button"
+            options={{
+              onStartShouldSet: () => true
+            }}
+          />
+        </Example>
+      </Example>
+    </div>
+  ));

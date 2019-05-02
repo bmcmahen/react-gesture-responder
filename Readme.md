@@ -71,6 +71,7 @@ Only one pan responder can be active at any given time. The pan-responder hook p
 - `onMoveShouldSet: (state, e) => boolean` - This is called during any gesture movement on the view. You can return true to claim the responder for that view.
 - `onStartShouldSetCapture: (state, e) => boolean` - The same as above, but using event capturing instead of bubbling. Useful if you want a parent view to capture the responder prior to children.
 - `onMoveShouldSetCapture: (state, e) => boolean`.
+- `onTerminationRequest: (state) => boolean`. - Should we allow the responder to be claimed by another view? This is only called when a parent `onMoveShouldSet` returns true. By default, it returns true.
 
 By default, if a parent and child both return true from `onStartShouldSet` the child element will claim the responder.
 
@@ -88,6 +89,7 @@ const { bind } = usePanResponder(
     onStartShouldSetCapture: state => false,
     onMoveShouldSet: state => false,
     onMoveShouldSetCapture: state => false,
+    onTerminationRequest: state => true,
     onGrant: state => {},
     onRelease: state => {},
     onTerminate: state => {},
