@@ -28,32 +28,38 @@ yarn add pan-responder-hook
 The example below demonstrates how it can be used in conjunction with `react-spring`.
 
 ```jsx
-import { usePanResponder } from 'pan-responder-hook';
+import { useSpring, animated } from "react-spring";
+import { usePanResponder } from "pan-responder-hook";
 
 function Draggable() {
-  const [active, setActive] = React.useState(false);
-  const [style, set] = useSpring(() => ({
-    transform: `translate3d(0px, 0px, 0)`
+  const [{ xy }, set] = useSpring(() => ({
+    xy: [0, 0]
   }));
 
   const { bind } = usePanResponder({
     onStartShouldSet: () => true,
-    onGrant: () => setActive(true),
     onRelease: onEnd,
     onTerminate: onEnd,
     onMove: state => {
       set({
-        transform: `translate3d(${state.delta[0]}px, ${state.delta[1]}px, 0)`
+        xy: delta,
+        immediate: true
       });
     }
   });
 
   function onEnd() {
-    setActive(false);
-    set({ transform: `translate3d(0px, 0px, 0)` });
+    set({ xy: [0, 0], immediate: false });
   }
 
-  return <animated.div style={style} {...bind} />;
+  return (
+    <animated.div
+      style={{
+        transform: xy.interpolate((x, y) => `translate3d(${x}px, ${y}px, 0)`)
+      }}
+      {...bind}
+    />
+  );
 }
 ```
 
