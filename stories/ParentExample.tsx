@@ -45,7 +45,8 @@ function Parent() {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),
       onRelease: () => setActive(false),
-      onMoveShouldSet: () => {
+      onMoveShouldSet: state => {
+        console.log(state.xy);
         return true;
       },
       onMove: () => {

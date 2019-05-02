@@ -191,6 +191,8 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   function handleMoveCapture(e: ResponderEvent) {
+    updateMoveState(e);
+
     if (!isGrantedTouch()) {
       const grant = onMoveShouldSetCapture(e);
       if (grant) claimTouch(e);
@@ -206,6 +208,8 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   function handleMove(e: ResponderEvent) {
+    updateMoveState(e);
+
     if (!isGrantedTouch()) {
       if (onMoveShouldSet(e)) {
         claimTouch(e);
@@ -281,12 +285,11 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
   }
 
   /**
-   * The user is moving their touch / mouse. Most of the math here
-   * is from react-with-gesture.
+   * Update our kinematics when moving
    * @param e
    */
 
-  function onMove(e: any) {
+  function updateMoveState(e: any) {
     const { pageX, pageY } = e.touches && e.touches[0] ? e.touches[0] : e;
     const s = state.current;
     const time = Date.now();
@@ -313,7 +316,15 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
       direction: [x_dist * scaler, y_dist * scaler],
       previous: s.xy
     };
+  }
 
+  /**
+   * The user is moving their touch / mouse. Most of the math here
+   * is from react-with-gesture.
+   * @param e
+   */
+
+  function onMove(e: any) {
     if (callbackRefs.current.onMove) {
       callbackRefs.current.onMove(state.current, e);
     }
