@@ -120,4 +120,4 @@ export interface StateType {
 ## Prior art
 
 - [react-native-web](https://github.com/necolas/react-native-web/blob/master/packages/react-native-web/src/vendor/react-native/PanResponder/index.js)
-- [react-with-gesture](https://github.com/react-spring/react-use-gesture) for some of the math.
+- [react-with-gesture](https://github.com/react-spring/react-use-gesture) for some of the kinematics.
