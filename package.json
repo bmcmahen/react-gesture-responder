@@ -5,7 +5,22 @@
   "main": "cjs/index.js",
   "module": "esm/index.js",
   "typings": "esm/index.d.ts",
+  "keywords": [
+    "gesture",
+    "react",
+    "hooks",
+    "pan-responder",
+    "touch"
+  ],
   "author": "Ben McMahen",
+  "homepage": "https://github.com/bmcmahen/pan-responder-hook",
+  "bugs": {
+    "url": "https://github.com/bmcmahen/pan-responder-hook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bmcmahen/pan-responder-hook.git"
+  },
   "license": "MIT",
   "private": false,
   "scripts": {
