@@ -11,7 +11,7 @@ https://twitter.com/intent/follow?screen_name=benmcmahen
 
 `pan-responder-hook` offers a gesture responder system for your react application. It's heavily inspired by [react native's](https://facebook.github.io/react-native/docs/gesture-responder-system.html) pan-responder and the implementation found in [react-native-web](https://github.com/necolas/react-native-web/blob/master/packages/react-native-web/src/vendor/react-native/PanResponder/index.js). It's built for use in [Sancho-UI](https://github.com/bmcmahen/sancho).
 
-Features:
+## Features
 
 - **The ability to delegate between multiple overlapping gestures.** This means that you can embed gesture responding views within eachother and provide negotiation strategies between them.
 - **Simple math for providing gesture based animations.** Values including distance, velocity, delta, and direction are provided during through gesture callbacks.
