@@ -46,7 +46,7 @@ export interface Callbacks {
   onTerminate?: (state: StateType, e?: ResponderEvent) => void;
 }
 
-const initialState = {
+const initialState: StateType = {
   time: Date.now(),
   xy: [0, 0],
   delta: [0, 0],
@@ -56,11 +56,21 @@ const initialState = {
   local: [0, 0],
   lastLocal: [0, 0],
   velocity: 0,
-  distance: 0,
-  first: true
+  distance: 0
 };
 
-export type StateType = typeof initialState;
+export interface StateType {
+  time: number;
+  xy: [number, number];
+  delta: [number, number];
+  initial: [number, number];
+  previous: [number, number];
+  direction: [number, number];
+  local: [number, number];
+  lastLocal: [number, number];
+  velocity: number;
+  distance: number;
+}
 
 interface Config {
   uid?: string;
@@ -123,11 +133,6 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
       onTerminate
     };
 
-    state.current = {
-      ...state.current,
-      first: true
-    };
-
     onGrant(e);
   }
 
@@ -172,11 +177,6 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
 
     // remove touch
     grantedTouch = null;
-
-    state.current = {
-      ...state.current,
-      first: false
-    };
 
     if (e.cancelable) {
       e.preventDefault();
@@ -311,8 +311,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
       velocity: time - s.time === 0 ? s.velocity : velocity,
       distance,
       direction: [x_dist * scaler, y_dist * scaler],
-      previous: s.xy,
-      first: false
+      previous: s.xy
     };
 
     if (callbackRefs.current.onMove) {
