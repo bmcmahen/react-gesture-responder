@@ -10,8 +10,8 @@ export const DragAndRelease: React.FunctionComponent<
   DragAndReleaseProps
 > = props => {
   const [active, setActive] = React.useState(false);
-  const [style, set] = useSpring(() => ({
-    transform: `translate3d(0px, 0px, 0)`
+  const [{ xy }, set] = useSpring(() => ({
+    xy: [0, 0]
   }));
 
   const { bind } = usePanResponder({
@@ -20,8 +20,8 @@ export const DragAndRelease: React.FunctionComponent<
     onRelease: end,
     onMove: state => {
       set({
-        transform: `translate3d(${state.delta[0]}px, ${state.delta[1]}px, 0)`,
-        immediate: false
+        xy: state.delta,
+        immediate: true
       });
     },
     onTerminate: end
@@ -31,15 +31,20 @@ export const DragAndRelease: React.FunctionComponent<
     setActive(false);
 
     set({
-      transform: `translate3d(0px, 0px, 0)`,
+      xy: [0, 0],
       immediate: false
     });
   }
 
+  const interpolate = (x: number, y: number) =>
+    `translate3d(${x}px, ${y}px, 0)`;
+
   return (
     <React.Fragment>
       <animated.div
-        style={style}
+        style={{
+          transform: xy.interpolate(interpolate as any)
+        }}
         css={{
           background: active ? "#08e" : "#ddd",
           cursor: active ? "-webkit-grabbing" : "-webkit-grab",
