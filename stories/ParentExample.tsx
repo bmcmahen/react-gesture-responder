@@ -42,16 +42,22 @@ function Parent() {
   const [active, setActive] = React.useState(false);
   const { bind } = usePanResponder(
     {
-      onStartShouldSet: () => true,
+      onStartShouldSet: state => {
+        console.log(state);
+        return true;
+      },
       onGrant: () => setActive(true),
       onRelease: () => setActive(false),
       onMoveShouldSet: state => {
-        console.log(state.xy);
+        if (
+          state.initial[0] == state.xy[0] &&
+          state.initial[1] == state.xy[1]
+        ) {
+          return false;
+        }
         return true;
       },
-      onMove: () => {
-        console.log(active);
-      },
+      onMove: () => {},
       onTerminate: () => {
         console.log("terminate");
         setActive(false);

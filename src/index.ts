@@ -137,6 +137,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
   }
 
   function handleStartCapture(e: ResponderEvent) {
+    updateStartState(e);
     setPressed(true);
 
     const granted = onStartShouldSetCapture(e);
@@ -146,6 +147,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
   }
 
   function handleStart(e: ResponderEvent) {
+    updateStartState(e);
     setPressed(true);
 
     if (e.cancelable) {
@@ -269,19 +271,27 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   function onGrant(e: any) {
+    if (callbackRefs.current.onGrant) {
+      callbackRefs.current.onGrant(state.current, e);
+    }
+  }
+
+  /**
+   * Update our kinematics for start events
+   * @param e
+   */
+
+  function updateStartState(e: any) {
     const { pageX, pageY } = e.touches && e.touches[0] ? e.touches[0] : e;
     const s = state.current;
     state.current = {
-      ...state.current,
+      ...initialState,
       lastLocal: s.lastLocal || initialState.lastLocal,
       xy: [pageX, pageY],
       initial: [pageX, pageY],
       previous: [pageX, pageY],
       time: Date.now()
     };
-    if (callbackRefs.current.onGrant) {
-      callbackRefs.current.onGrant(state.current, e);
-    }
   }
 
   /**
