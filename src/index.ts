@@ -208,15 +208,14 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
   function handleMove(e: ResponderEvent) {
     updateMoveState(e);
 
-    if (!isGrantedTouch()) {
-      if (onMoveShouldSet(e)) {
-        claimTouch(e);
-      } else {
-        return;
-      }
+    if (isGrantedTouch()) {
+      onMove(e);
+      return;
     }
 
-    onMove(e);
+    if (onMoveShouldSet(e)) {
+      claimTouch(e);
+    }
   }
 
   /**
