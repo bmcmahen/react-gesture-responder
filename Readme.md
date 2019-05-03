@@ -14,7 +14,7 @@ https://twitter.com/intent/follow?screen_name=benmcmahen
 ## Features
 
 - **The ability to delegate between multiple overlapping gestures.** This means that you can embed gesture responding views within eachother and provide negotiation strategies between them.
-- **Simple math for providing gesture based animations.** Values including distance, velocity, delta, and direction are provided through gesture callbacks.
+- **Simple kinematics for gesture based animations.** Values including distance, velocity, delta, and direction are provided through gesture callbacks.
 - **Integrates well with [react-spring](react-spring.io) to create performant animations**.
 
 ## Getting started
