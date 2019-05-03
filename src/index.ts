@@ -99,7 +99,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
     ...config
   };
   const id = React.useRef(uid || Math.random());
-  const [pressed, setPressed] = React.useState(false);
+  const pressed = React.useRef(false);
 
   // update our callbacks when they change
   const callbackRefs = React.useRef(options);
@@ -140,9 +140,21 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
     onGrant(e);
   }
 
+  function bindGlobalMouseEvents() {
+    window.addEventListener("mousemove", handleMoveMouse, false);
+    window.addEventListener("mousemove", handleMoveMouseCapture, true);
+    window.addEventListener("mouseup", handleEnd);
+  }
+
+  function unbindGlobalMouseEvents() {
+    window.removeEventListener("mousemove", handleMoveMouse, false);
+    window.removeEventListener("mousemove", handleMoveMouseCapture, true);
+    window.removeEventListener("mouseup", handleEndMouse);
+  }
+
   function handleStartCapture(e: ResponderEvent) {
     updateStartState(e);
-    setPressed(true);
+    pressed.current = true;
 
     const granted = onStartShouldSetCapture(e);
     if (granted) {
@@ -152,7 +164,8 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
 
   function handleStart(e: ResponderEvent) {
     updateStartState(e);
-    setPressed(true);
+    pressed.current = true;
+    bindGlobalMouseEvents();
 
     const granted = onStartShouldSet(e);
 
@@ -171,7 +184,8 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   function handleEnd(e: ResponderEvent) {
-    setPressed(false);
+    pressed.current = false;
+    unbindGlobalMouseEvents();
 
     if (!isGrantedTouch()) {
       return;
@@ -327,7 +341,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   function onMove(e: any) {
-    if (pressed && callbackRefs.current.onMove) {
+    if (pressed.current && callbackRefs.current.onMove) {
       callbackRefs.current.onMove(state.current, e);
     }
   }
@@ -406,18 +420,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
     }
   }
 
-  React.useEffect(() => {
-    if (pressed && enableMouse) {
-      window.addEventListener("mousemove", handleMoveMouse, false);
-      window.addEventListener("mousemove", handleMoveMouseCapture, true);
-      window.addEventListener("mouseup", handleEnd);
-    }
-    return () => {
-      window.removeEventListener("mousemove", handleMoveMouse, false);
-      window.removeEventListener("mousemove", handleMoveMouseCapture, true);
-      window.removeEventListener("mouseup", handleEndMouse);
-    };
-  }, [pressed, enableMouse]);
+  React.useEffect(() => unbindGlobalMouseEvents, []);
 
   /**
    * Imperatively terminate the current responder
