@@ -19,6 +19,7 @@ export const DragAndRelease: React.FunctionComponent<
     onGrant: () => setActive(true),
     onRelease: end,
     onMove: state => {
+      console.log(state.velocity);
       set({
         xy: state.delta,
         immediate: true
@@ -27,7 +28,8 @@ export const DragAndRelease: React.FunctionComponent<
     onTerminate: end
   });
 
-  function end() {
+  function end(state: StateType) {
+    console.log(state);
     setActive(false);
 
     set({

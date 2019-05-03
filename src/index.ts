@@ -191,13 +191,13 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
   function handleMoveCapture(e: ResponderEvent) {
     updateMoveState(e);
 
-    if (!isGrantedTouch()) {
-      const grant = onMoveShouldSetCapture(e);
-      if (grant) claimTouch(e);
-      else return;
+    if (isGrantedTouch()) {
+      return;
     }
 
-    onMove(e);
+    if (onMoveShouldSetCapture(e)) {
+      claimTouch(e);
+    }
   }
 
   /**
@@ -206,8 +206,6 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   function handleMove(e: ResponderEvent) {
-    updateMoveState(e);
-
     if (isGrantedTouch()) {
       onMove(e);
       return;
