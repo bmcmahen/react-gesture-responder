@@ -15,15 +15,20 @@ function Example({ options, uid = "child", children }: ExampleOptions) {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),
       onRelease: () => {
+        console.log("release");
         setActive(false);
       },
-      onTerminate: () => setActive(false),
+      onTerminate: () => {
+        console.log("terminate");
+        setActive(false);
+      },
+      onMove: () => {
+        console.log("move");
+      },
       ...options
     },
     { uid }
   );
-
-  console.log(active);
 
   return (
     <div

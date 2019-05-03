@@ -99,6 +99,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
   };
   const id = React.useRef(uid || Math.random());
   const [pressed, setPressed] = React.useState(false);
+  const [isTouch, setIsTouch] = React.useState(false);
 
   // update our callbacks when they change
   const callbackRefs = React.useRef(options);
@@ -153,10 +154,6 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
     updateStartState(e);
     setPressed(true);
 
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-
     const granted = onStartShouldSet(e);
 
     if (granted) {
@@ -182,10 +179,6 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
 
     // remove touch
     grantedTouch = null;
-
-    if (e.cancelable) {
-      e.preventDefault();
-    }
 
     onRelease(e);
   }
@@ -332,13 +325,12 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
   }
 
   /**
-   * The user is moving their touch / mouse. Most of the math here
-   * is from react-with-gesture.
+   * The user is moving their touch / mouse.
    * @param e
    */
 
   function onMove(e: any) {
-    if (callbackRefs.current.onMove) {
+    if (pressed && callbackRefs.current.onMove) {
       callbackRefs.current.onMove(state.current, e);
     }
   }
@@ -359,6 +351,9 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
     if (callbackRefs.current.onRelease) {
       callbackRefs.current.onRelease(state.current, e);
     }
+
+    grantedTouch = null;
+    setIsTouch(false);
   }
 
   /**
@@ -390,6 +385,8 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
     if (callbackRefs.current.onTerminate) {
       callbackRefs.current.onTerminate(state.current, e);
     }
+
+    setIsTouch(false);
   }
 
   /**
@@ -398,7 +395,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   React.useEffect(() => {
-    if (pressed && enableMouse) {
+    if (pressed && enableMouse && !isTouch) {
       window.addEventListener("mousemove", handleMove, false);
       window.addEventListener("mousemove", handleMoveCapture, true);
       window.addEventListener("mouseup", handleEnd);
@@ -408,7 +405,7 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
       window.removeEventListener("mousemove", handleMoveCapture, true);
       window.removeEventListener("mouseup", handleEnd);
     };
-  }, [pressed, enableMouse]);
+  }, [pressed, enableMouse, isTouch]);
 
   /**
    * Imperatively terminate the current responder
@@ -435,19 +432,23 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   const touchEvents = {
-    onTouchStart: handleStart,
+    onTouchStart: (e: React.TouchEvent) => {
+      setIsTouch(true);
+      handleStart(e);
+    },
     onTouchEnd: handleEnd,
     onTouchMove: handleMove,
     onTouchStartCapture: handleStartCapture,
     onTouchMoveCapture: handleMoveCapture
   };
 
-  const mouseEvents = enableMouse
-    ? {
-        onMouseDown: handleStart,
-        onMouseDownCapture: handleStartCapture
-      }
-    : {};
+  const mouseEvents =
+    enableMouse && !isTouch
+      ? {
+          onMouseDown: handleStart,
+          onMouseDownCapture: handleStartCapture
+        }
+      : {};
 
   return {
     bind: {

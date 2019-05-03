@@ -17,6 +17,9 @@ function Child() {
       onTerminate: () => {
         console.log("terminate");
         setActive(false);
+      },
+      onMove: () => {
+        console.log("move child");
       }
     },
     { uid: "child" }
@@ -47,7 +50,10 @@ function Parent() {
         return true;
       },
       onGrant: () => setActive(true),
-      onRelease: () => setActive(false),
+      onRelease: () => {
+        console.log("release parent");
+        setActive(false);
+      },
       onMoveShouldSet: state => {
         if (
           state.initial[0] == state.xy[0] &&
@@ -57,7 +63,9 @@ function Parent() {
         }
         return true;
       },
-      onMove: () => {},
+      onMove: () => {
+        console.log("move parent");
+      },
       onTerminate: () => {
         console.log("terminate");
         setActive(false);
