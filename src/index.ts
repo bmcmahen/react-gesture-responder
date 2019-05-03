@@ -1,4 +1,5 @@
 import * as React from "react";
+import { isMouseEnabled } from "./mouse-enabled";
 
 /**
  * The pan responder takes its inspiration from react-native's
@@ -99,7 +100,6 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
   };
   const id = React.useRef(uid || Math.random());
   const [pressed, setPressed] = React.useState(false);
-  const [isTouch, setIsTouch] = React.useState(false);
 
   // update our callbacks when they change
   const callbackRefs = React.useRef(options);
@@ -352,7 +352,6 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
     }
 
     grantedTouch = null;
-    setIsTouch(false);
   }
 
   /**
@@ -384,8 +383,6 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
     if (callbackRefs.current.onTerminate) {
       callbackRefs.current.onTerminate(state.current, e);
     }
-
-    setIsTouch(false);
   }
 
   /**
@@ -393,18 +390,36 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    * element itself to better emulate how touchmove works.
    */
 
+  function handleMoveMouse(e: Event) {
+    if (isMouseEnabled()) {
+      handleMove(e);
+    }
+  }
+
+  function handleMoveMouseCapture(e: Event) {
+    if (isMouseEnabled()) {
+      handleMoveCapture(e);
+    }
+  }
+
+  function handleEndMouse(e: Event) {
+    if (isMouseEnabled()) {
+      handleEnd(e);
+    }
+  }
+
   React.useEffect(() => {
-    if (pressed && enableMouse && !isTouch) {
-      window.addEventListener("mousemove", handleMove, false);
-      window.addEventListener("mousemove", handleMoveCapture, true);
+    if (pressed && enableMouse) {
+      window.addEventListener("mousemove", handleMoveMouse, false);
+      window.addEventListener("mousemove", handleMoveMouseCapture, true);
       window.addEventListener("mouseup", handleEnd);
     }
     return () => {
-      window.removeEventListener("mousemove", handleMove, false);
-      window.removeEventListener("mousemove", handleMoveCapture, true);
-      window.removeEventListener("mouseup", handleEnd);
+      window.removeEventListener("mousemove", handleMoveMouse, false);
+      window.removeEventListener("mousemove", handleMoveMouseCapture, true);
+      window.removeEventListener("mouseup", handleEndMouse);
     };
-  }, [pressed, enableMouse, isTouch]);
+  }, [pressed, enableMouse]);
 
   /**
    * Imperatively terminate the current responder
@@ -431,23 +446,27 @@ export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
    */
 
   const touchEvents = {
-    onTouchStart: (e: React.TouchEvent) => {
-      setIsTouch(true);
-      handleStart(e);
-    },
+    onTouchStart: handleStart,
     onTouchEnd: handleEnd,
     onTouchMove: handleMove,
     onTouchStartCapture: handleStartCapture,
     onTouchMoveCapture: handleMoveCapture
   };
 
-  const mouseEvents =
-    enableMouse && !isTouch
-      ? {
-          onMouseDown: handleStart,
-          onMouseDownCapture: handleStartCapture
+  const mouseEvents = enableMouse
+    ? {
+        onMouseDown: (e: React.MouseEvent) => {
+          if (isMouseEnabled()) {
+            handleStart(e);
+          }
+        },
+        onMouseDownCapture: (e: React.MouseEvent) => {
+          if (isMouseEnabled()) {
+            handleStartCapture(e);
+          }
         }
-      : {};
+      }
+    : {};
 
   return {
     bind: {
