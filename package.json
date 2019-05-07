@@ -1,5 +1,5 @@
 {
-  "name": "pan-responder-hook",
+  "name": "react-gesture-hook",
   "version": "1.1.4",
   "description": "A react-native like gesture helper for the React and using hooks",
   "main": "cjs/index.js",
@@ -13,13 +13,13 @@
     "touch"
   ],
   "author": "Ben McMahen",
-  "homepage": "https://github.com/bmcmahen/pan-responder-hook",
+  "homepage": "https://github.com/bmcmahen/react-gesture-hook",
   "bugs": {
-    "url": "https://github.com/bmcmahen/pan-responder-hook/issues"
+    "url": "https://github.com/bmcmahen/react-gesture-hook/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bmcmahen/pan-responder-hook.git"
+    "url": "https://github.com/bmcmahen/react-gesture-hook.git"
   },
   "license": "MIT",
   "private": false,

@@ -2,15 +2,15 @@ import * as React from "react";
 import { isMouseEnabled } from "./mouse-enabled";
 
 /**
- * The pan responder takes its inspiration from react-native's
- * pan-responder, and react-spring. Learn more about react-native's
+ * The responder takes its inspiration from react-native's
+ * pan-responder. Learn more about react-native's
  * system here:
  *
  * https://facebook.github.io/react-native/docs/gesture-responder-system.html
  *
  * Basic usage:
  *
- * const bind = usePanResponder({
+ * const bind = useGesture({
  *  onStartShouldSet: () => true,
  *  onGrant: () => highlight(),
  *  onMove: () => updatePosition(),
@@ -91,7 +91,7 @@ export interface GrantedTouch {
 
 let grantedTouch: GrantedTouch | null = null;
 
-export function usePanResponder(options: Callbacks = {}, config: Config = {}) {
+export function useGesture(options: Callbacks = {}, config: Config = {}) {
   const state = React.useRef(initialState);
 
   const { uid, enableMouse } = {
