@@ -1,11 +1,13 @@
 <div align="center">
-    
+     <img 
+    max-width="300px"
+    alt="A demo showing a ball being pulled around, released, and animating back into place."
+     src="https://raw.githubusercontent.com/bmcmahen/react-gesture-responder/master/demo.gif"><br />
+
 # react-gesture-responder
-  
+
 [![npm package](https://img.shields.io/npm/v/react-gesture-responder/latest.svg)](https://www.npmjs.com/package/react-gesture-responder)
-[![Follow on Twitter](https://img.shields.io/twitter/follow/benmcmahen.svg?style=social&logo=twitter)](
-https://twitter.com/intent/follow?screen_name=benmcmahen
-)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/benmcmahen.svg?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=benmcmahen)
 
 </div>
 
