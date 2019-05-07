@@ -1,6 +1,6 @@
 <div align="center">
     
-# pan-responder-hook
+# react-gesture-hook
   
 [![npm package](https://img.shields.io/npm/v/pan-responder-hook/latest.svg)](https://www.npmjs.com/package/pan-responder-hook)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/benmcmahen.svg?style=social&logo=twitter)](
@@ -9,34 +9,35 @@ https://twitter.com/intent/follow?screen_name=benmcmahen
 
 </div>
 
-`pan-responder-hook` offers a gesture responder system for your react application. It's heavily inspired by [react-native's](https://facebook.github.io/react-native/docs/gesture-responder-system.html) pan-responder and the implementation found in [react-native-web](https://github.com/necolas/react-native-web/blob/master/packages/react-native-web/src/vendor/react-native/PanResponder/index.js). It's built for use in [Sancho-UI](https://github.com/bmcmahen/sancho).
+`react-gesture-hook` offers a gesture responder system for your react application. It's heavily inspired by [react-native's](https://facebook.github.io/react-native/docs/gesture-responder-system.html) pan-responder. It's built for use in [Sancho-UI](https://github.com/bmcmahen/sancho).
 
 ## Features
 
 - **The ability to delegate between multiple overlapping gestures.** This means that you can embed gesture responding views within eachother and provide negotiation strategies between them.
 - **Simple kinematics for gesture based animations.** Values including distance, velocity, delta, and direction are provided through gesture callbacks.
 - **Integrates well with [react-spring](react-spring.io) to create performant animations**.
+- **Built with react-gesture-hook:** [react-gesture-view](https://github.com/bmcmahen/react-gesture-view), [touchable-hook](https://github.com/bmcmahen/touchable-hook), [sancho-ui](https://github.com/bmcmahen/sancho). 
 
 ## Getting started
 
 Install into your react project using yarn or npm.
 
 ```
-yarn add pan-responder-hook
+yarn add react-gesture-hook
 ```
 
 The example below demonstrates how it can be used in conjunction with `react-spring`.
 
 ```jsx
 import { useSpring, animated } from "react-spring";
-import { usePanResponder } from "pan-responder-hook";
+import { useGesture } from "react-gesture-hook";
 
 function Draggable() {
   const [{ xy }, set] = useSpring(() => ({
     xy: [0, 0]
   }));
 
-  const { bind } = usePanResponder({
+  const { bind } = useGesture({
     onStartShouldSet: () => true,
     onRelease: onEnd,
     onTerminate: onEnd,
@@ -65,7 +66,7 @@ function Draggable() {
 
 ## API
 
-Only one pan responder can be active at any given time. The pan-responder hook provides callbacks which allow you to implement a negotiation strategy between competing views.
+Only one responder can be active at any given time. The `useGesture` hook provides callbacks which allow you to implement a negotiation strategy between competing views.
 
 - `onStartShouldSet: (state, e) => boolean` - Should the view become the responder upon first touch?
 - `onMoveShouldSet: (state, e) => boolean` - This is called during any gesture movement on the view. You can return true to claim the responder for that view.
@@ -83,7 +84,7 @@ Once a responder is claimed, other callbacks can be used to provide visual feedb
 - `onTerminate: (state) => void` - called when the responder is claimed by another view.
 
 ```js
-const { bind } = usePanResponder(
+const { bind } = useGesture(
   {
     onStartShouldSet: state => true,
     onStartShouldSetCapture: state => false,
