@@ -1,6 +1,6 @@
 import * as React from "react";
 import { storiesOf } from "@storybook/react";
-import { usePanResponder } from "../src";
+import { useGestureResponder } from "../src";
 import { ParentExample } from "./ParentExample";
 import { DragAndRelease } from "./DragAndRelease";
 
@@ -10,7 +10,7 @@ function Example({ options, uid = "child", children }: ExampleOptions) {
   const [active, setActive] = React.useState(false);
   const [count, setCount] = React.useState(0);
 
-  const { bind } = usePanResponder(
+  const { bind } = useGestureResponder(
     {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),

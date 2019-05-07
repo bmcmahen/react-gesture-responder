@@ -2,11 +2,11 @@
 import { css, jsx } from "@emotion/core";
 import * as React from "react";
 import { storiesOf } from "@storybook/react";
-import { usePanResponder } from "../src";
+import { useGestureResponder } from "../src";
 
 function Child() {
   const [active, setActive] = React.useState(false);
-  const { bind } = usePanResponder(
+  const { bind } = useGestureResponder(
     {
       onStartShouldSet: () => true,
       onGrant: () => setActive(true),
@@ -43,7 +43,7 @@ function Child() {
 
 function Parent() {
   const [active, setActive] = React.useState(false);
-  const { bind } = usePanResponder(
+  const { bind } = useGestureResponder(
     {
       onStartShouldSet: state => {
         console.log(state);

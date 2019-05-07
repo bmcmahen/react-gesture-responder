@@ -2,7 +2,7 @@
 import { jsx, Global } from "@emotion/core";
 import * as React from "react";
 import { useSpring, animated, interpolate } from "react-spring";
-import { usePanResponder, StateType } from "../src";
+import { useGestureResponder, StateType } from "../src";
 
 export interface DragAndReleaseProps {}
 
@@ -14,7 +14,7 @@ export const DragAndRelease: React.FunctionComponent<
     xy: [0, 0]
   }));
 
-  const { bind } = usePanResponder({
+  const { bind } = useGestureResponder({
     onStartShouldSet: () => true,
     onGrant: () => setActive(true),
     onRelease: end,
