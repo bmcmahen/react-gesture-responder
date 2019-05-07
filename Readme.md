@@ -2,7 +2,7 @@
     
 # react-gesture-responder
   
-[![npm package](https://img.shields.io/npm/v/pan-responder-hook/latest.svg)](https://www.npmjs.com/package/pan-responder-hook)
+[![npm package](https://img.shields.io/npm/v/react-gesture-responder/latest.svg)](https://www.npmjs.com/package/react-gesture-responder)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/benmcmahen.svg?style=social&logo=twitter)](
 https://twitter.com/intent/follow?screen_name=benmcmahen
 )
