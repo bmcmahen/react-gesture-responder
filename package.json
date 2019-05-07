@@ -1,5 +1,5 @@
 {
-  "name": "react-gesture-hook",
+  "name": "react-gesture-responder",
   "version": "1.1.4",
   "description": "A react-native like gesture helper for the React and using hooks",
   "main": "cjs/index.js",
@@ -13,13 +13,13 @@
     "touch"
   ],
   "author": "Ben McMahen",
-  "homepage": "https://github.com/bmcmahen/react-gesture-hook",
+  "homepage": "https://github.com/bmcmahen/react-gesture-responder",
   "bugs": {
-    "url": "https://github.com/bmcmahen/react-gesture-hook/issues"
+    "url": "https://github.com/bmcmahen/react-gesture-responder/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bmcmahen/react-gesture-hook.git"
+    "url": "https://github.com/bmcmahen/react-gesture-responder.git"
   },
   "license": "MIT",
   "private": false,

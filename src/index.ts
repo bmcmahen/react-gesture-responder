@@ -10,7 +10,7 @@ import { isMouseEnabled } from "./mouse-enabled";
  *
  * Basic usage:
  *
- * const bind = useGesture({
+ * const bind = useGestureResponder({
  *  onStartShouldSet: () => true,
  *  onGrant: () => highlight(),
  *  onMove: () => updatePosition(),
@@ -91,7 +91,10 @@ export interface GrantedTouch {
 
 let grantedTouch: GrantedTouch | null = null;
 
-export function useGesture(options: Callbacks = {}, config: Config = {}) {
+export function useGestureResponder(
+  options: Callbacks = {},
+  config: Config = {}
+) {
   const state = React.useRef(initialState);
 
   const { uid, enableMouse } = {

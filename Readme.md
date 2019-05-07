@@ -1,6 +1,6 @@
 <div align="center">
     
-# react-gesture-hook
+# react-gesture-responder
   
 [![npm package](https://img.shields.io/npm/v/pan-responder-hook/latest.svg)](https://www.npmjs.com/package/pan-responder-hook)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/benmcmahen.svg?style=social&logo=twitter)](
@@ -9,35 +9,35 @@ https://twitter.com/intent/follow?screen_name=benmcmahen
 
 </div>
 
-`react-gesture-hook` offers a gesture responder system for your react application. It's heavily inspired by [react-native's](https://facebook.github.io/react-native/docs/gesture-responder-system.html) pan-responder. It's built for use in [Sancho-UI](https://github.com/bmcmahen/sancho).
+`react-gesture-responder` offers a gesture responder system for your react application. It's heavily inspired by [react-native's](https://facebook.github.io/react-native/docs/gesture-responder-system.html) pan-responder. It's built for use in [Sancho-UI](https://github.com/bmcmahen/sancho).
 
 ## Features
 
 - **The ability to delegate between multiple overlapping gestures.** This means that you can embed gesture responding views within eachother and provide negotiation strategies between them.
 - **Simple kinematics for gesture based animations.** Values including distance, velocity, delta, and direction are provided through gesture callbacks.
 - **Integrates well with [react-spring](react-spring.io) to create performant animations**.
-- **Built with react-gesture-hook:** [react-gesture-view](https://github.com/bmcmahen/react-gesture-view), [touchable-hook](https://github.com/bmcmahen/touchable-hook), [sancho-ui](https://github.com/bmcmahen/sancho). 
+- **Built with react-gesture-responder:** [react-gesture-view](https://github.com/bmcmahen/react-gesture-view), [touchable-hook](https://github.com/bmcmahen/touchable-hook), [sancho-ui](https://github.com/bmcmahen/sancho).
 
 ## Getting started
 
 Install into your react project using yarn or npm.
 
 ```
-yarn add react-gesture-hook
+yarn add react-gesture-responder
 ```
 
 The example below demonstrates how it can be used in conjunction with `react-spring`.
 
 ```jsx
 import { useSpring, animated } from "react-spring";
-import { useGesture } from "react-gesture-hook";
+import { useGestureResponder } from "react-gesture-responder";
 
 function Draggable() {
   const [{ xy }, set] = useSpring(() => ({
     xy: [0, 0]
   }));
 
-  const { bind } = useGesture({
+  const { bind } = useGestureResponder({
     onStartShouldSet: () => true,
     onRelease: onEnd,
     onTerminate: onEnd,
@@ -84,7 +84,7 @@ Once a responder is claimed, other callbacks can be used to provide visual feedb
 - `onTerminate: (state) => void` - called when the responder is claimed by another view.
 
 ```js
-const { bind } = useGesture(
+const { bind } = useGestureResponder(
   {
     onStartShouldSet: state => true,
     onStartShouldSetCapture: state => false,
