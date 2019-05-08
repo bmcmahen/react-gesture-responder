@@ -28,9 +28,8 @@
     "test-watch": "jest -w",
     "storybook": "start-storybook -p 6006",
     "build-esm": "rimraf esm && tsc",
-    "build-cjs": "rimraf cjs && tsc --module commonjs --outDir cjs",
-    "build-umd": "rimraf umd && rollup -c",
-    "build": "yarn run build-esm && yarn run build-cjs && yarn run build-umd",
+    "build-other": "rimraf umd && rimraf cjs && rollup -c",
+    "build": "yarn run build-esm && yarn run build-other",
     "prepublishOnly": "yarn run build"
   },
   "files": [
@@ -75,7 +74,7 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^4.0.1",
     "rollup-plugin-sourcemaps": "^0.4.2",
-    "rollup-plugin-typescript2": "^0.20.1",
+    "rollup-plugin-typescript2": "^0.21.0",
     "rollup-plugin-uglify": "^6.0.2",
     "ts-jest": "^24.0.1",
     "typescript": "^3.4.1",
