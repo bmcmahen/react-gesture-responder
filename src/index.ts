@@ -146,7 +146,7 @@ export function useGestureResponder(
   function bindGlobalMouseEvents() {
     window.addEventListener("mousemove", handleMoveMouse, false);
     window.addEventListener("mousemove", handleMoveMouseCapture, true);
-    window.addEventListener("mouseup", handleEnd);
+    window.addEventListener("mouseup", handleEndMouse);
   }
 
   function unbindGlobalMouseEvents() {
