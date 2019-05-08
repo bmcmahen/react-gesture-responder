@@ -43,7 +43,7 @@ function Draggable() {
     onStartShouldSet: () => true,
     onRelease: onEnd,
     onTerminate: onEnd,
-    onMove: state => {
+    onMove: ({delta}) => {
       set({
         xy: delta,
         immediate: true
