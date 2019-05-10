@@ -43,7 +43,7 @@ function Draggable() {
     onStartShouldSet: () => true,
     onRelease: onEnd,
     onTerminate: onEnd,
-    onMove: ({delta}) => {
+    onMove: ({ delta }) => {
       set({
         xy: delta,
         immediate: true
@@ -115,6 +115,7 @@ export interface StateType {
   initial: [number, number];
   previous: [number, number];
   direction: [number, number];
+  initialDirection: [number, number];
   local: [number, number];
   lastLocal: [number, number];
   velocity: number;
