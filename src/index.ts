@@ -55,6 +55,7 @@ const initialState: StateType = {
   initial: [0, 0],
   previous: [0, 0],
   direction: [0, 0],
+  initialDirection: [0, 0],
   local: [0, 0],
   lastLocal: [0, 0],
   velocity: 0,
@@ -68,6 +69,7 @@ export interface StateType {
   initial: [number, number];
   previous: [number, number];
   direction: [number, number];
+  initialDirection: [number, number];
   local: [number, number];
   lastLocal: [number, number];
   velocity: number;
@@ -322,10 +324,16 @@ export function useGestureResponder(
     const scaler = 1 / (len || 1);
     const velocity = len / (time - s.time);
 
+    const initialDirection =
+      s.initialDirection[0] !== 0 || s.initialDirection[1] !== 0
+        ? s.initialDirection
+        : ([delta_x * scaler, delta_y * scaler] as [number, number]);
+
     state.current = {
       ...state.current,
       time,
       xy: [pageX, pageY],
+      initialDirection,
       delta: [delta_x, delta_y],
       local: [
         s.lastLocal[0] + pageX - s.initial[0],
