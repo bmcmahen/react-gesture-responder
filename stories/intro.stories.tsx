@@ -12,7 +12,10 @@ function Example({ options, uid = "child", children }: ExampleOptions) {
 
   const { bind } = useGestureResponder(
     {
-      onStartShouldSet: () => true,
+      onStartShouldSet: state => {
+        console.log(state.initialDirection);
+        return true;
+      },
       onGrant: () => setActive(true),
       onRelease: () => {
         console.log("release");
@@ -22,7 +25,8 @@ function Example({ options, uid = "child", children }: ExampleOptions) {
         console.log("terminate");
         setActive(false);
       },
-      onMove: () => {
+      onMove: state => {
+        console.log(state.initialDirection, state.direction);
         console.log("move");
       },
       ...options
@@ -105,4 +109,7 @@ storiesOf("Hello", module)
         </Example>
       </Example>
     </div>
-  ));
+  ))
+  .add("initial direction", () => {
+    return <Example />;
+  });
