@@ -18,7 +18,7 @@
 - **The ability to delegate between multiple overlapping gestures.** This means that you can embed gesture responding views within eachother and provide negotiation strategies between them.
 - **Simple kinematics for gesture based animations.** Values including distance, velocity, delta, and direction are provided through gesture callbacks.
 - **Integrates well with [react-spring](react-spring.io) to create performant animations**.
-- **Built with react-gesture-responder:** [react-gesture-view](https://github.com/bmcmahen/react-gesture-view), [touchable-hook](https://github.com/bmcmahen/touchable-hook), [sancho-ui](https://github.com/bmcmahen/sancho).
+- **Built with react-gesture-responder:** [react-gesture-view](https://github.com/bmcmahen/react-gesture-view), [touchable-hook](https://github.com/bmcmahen/touchable-hook), [react-grid-dnd](https://github.com/bmcmahen/react-grid-dnd), [sancho-ui](https://github.com/bmcmahen/sancho).
 
 ## Getting started
 
