@@ -13,6 +13,10 @@
 
 `react-gesture-responder` offers a gesture responder system for your react application. It's heavily inspired by [react-native's](https://facebook.github.io/react-native/docs/gesture-responder-system.html) pan-responder. It's built for use in [Sancho-UI](https://github.com/bmcmahen/sancho).
 
+[View the demo and website here](http://react-gesture-responder.netlify.com/). 
+
+You can also read how to [create a swipe to like feature](https://benmcmahen.com/building-react-components-with-gesture-support/) using react-gesture-responder.
+
 ## Features
 
 - **The ability to delegate between multiple overlapping gestures.** This means that you can embed gesture responding views within eachother and provide negotiation strategies between them.
